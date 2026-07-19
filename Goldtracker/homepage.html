@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoldTracker</title>
+<link rel="stylesheet" href="css/homestyle.css">
+</head>
+<body>
+
+<header class="navbar-sticky">
+  <div class="logo">GoldTracker</div>
+  <nav>
+    <a href="#live-gold-price">Dashboard</a>
+    <a href="#calculator">Currencies</a>
+    <a href="#gold-news">Blog</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+  <div class="header-actions">
+      <button id="theme-btn" class="theme-toggle" title="Toggle Light/Dark Mode">🌙</button>
+      <button class="logout" onclick="window.location.href='index.html'">Logout</button>
+  </div>
+</header>
+
+<!-- Live Gold Price -->
+<section id="live-gold-price" class="section">
+  <h1>Live Gold Price</h1>
+  <div class="tradingview-widget-container" style="width:100%; max-width:800px; margin:auto;">
+    <div id="tradingview_live_gold" style="width:100%; height:200px;"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script type="text/javascript">
+      new TradingView.MediumWidget({
+        "symbols": [["GOLD", "TVC:GOLD"]],
+        "chartOnly": false,
+        "width": "100%",
+        "height": 200,
+        "locale": "en",
+        "colorTheme": "dark",
+        "isTransparent": false,
+        "showVolume": false,
+        "showMA": false,
+        "container_id": "tradingview_live_gold"
+      });
+    </script>
+  </div>
+</section>
+
+<!-- Precious Metals Market -->
+<section class="section">
+  <h1>Precious Metals Market</h1>
+  <div class="tradingview-widget-container">
+    <div id="tradingview_metals"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script type="text/javascript">
+      new TradingView.widget({
+        "width": "100%",
+        "height": 500,
+        "symbol": "TVC:GOLD",
+        "interval": "D",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "en",
+        "toolbar_bg": "#000000",
+        "enable_publishing": false,
+        "container_id": "tradingview_metals"
+      });
+    </script>
+  </div>
+</section>
+
+<!-- Precious Metals Live Chart -->
+<section id="chart" class="section">
+  <h1>Precious Metals Prices</h1>
+  <canvas id="metalsChart"></canvas>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const metalNames = ['Gold','Silver','Platinum','Palladium'];
+const demoPrices = [1985, 24.3, 980, 2300]; // USD per oz, demo values
+
+const ctx = document.getElementById('metalsChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: metalNames,
+        datasets: [{
+            label: 'USD per oz',
+            data: demoPrices,
+            backgroundColor: ['#FFD700','#C0C0C0','#E5E4E2','#B0E0E6']
+        }]
+    },
+    options: {
+        responsive:true,
+        plugins: {
+            title: { display: true, text: 'Precious Metals Prices' },
+            legend: { display: false }
+        },
+        scales: { y: { beginAtZero: false } }
+    }
+});
+</script>
+
+<!-- Calculator -->
+<section id="calculator" class="section">
+  <h1>Gold Price Calculator</h1>
+  <p>Enter weight (grams):</p>
+  <input type="number" id="gold-weight" placeholder="grams">
+  <p>Select currency:</p>
+  <select id="currency">
+    <option value="USD">USD</option>
+    <option value="EUR">EUR</option>
+    <option value="THB">THB</option>
+    <option value="GBP">GBP</option>
+    <option value="JPY">JPY</option>
+  </select>
+  <button id="calculate-btn">Calculate</button>
+  <p id="result">Price will appear here</p>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="section">
+  <h1>Frequently Asked Questions</h1>
+  <div class="faq">
+    <details><summary>How often is the gold price updated?</summary><p>The gold price updates in real time based on market data.</p></details>
+    <details><summary>Can I see prices in other currencies?</summary><p>Yes, the backend system will support multiple currencies.</p></details>
+    <details><summary>Is this data free to use?</summary><p>This platform is designed for educational and informational purposes.</p></details>
+    <details><summary>What determines the price of gold?</summary><p>The price of gold is determined by global financial markets, supply and demand, inflation, and economic conditions.</p></details>
+    <details><summary>Why does the gold price change frequently?</summary><p>Gold prices change frequently because they react to market conditions, currency values, interest rates, and geopolitical events.</p></details>
+    <details><summary>Is the gold price the same worldwide?</summary><p>The base gold price is generally the same worldwide, but the final price may differ depending on currency exchange rates and local market conditions.</p></details>
+    <details><summary>What unit is used for gold pricing?</summary><p>Gold is commonly priced per troy ounce in international markets, but this website allows conversion to grams.</p></details>
+    <details><summary>Can I use this website on mobile devices?</summary><p>Yes, the website is designed to work on desktop, tablet, and mobile devices.</p></details>
+    <details><summary>Does this website allow buying or selling gold?</summary><p>No, this platform only provides gold price information and calculation tools.</p></details>
+    <details><summary>How accurate is the gold price on this website?</summary><p>The gold price comes from financial data sources and is updated frequently, but it may slightly differ from local dealers.</p></details>
+    <details><summary>What currencies will be supported?</summary><p>The system will support multiple currencies such as USD, EUR, and others through the backend API.</p></details>
+  </div>
+</section>
+
+<!-- Gold News -->
+<section id="gold-news" class="section">
+  <h1>Gold Market News</h1>
+  <iframe src="https://www.kitco.com/news/video" width="100%" height="400" style="border:none;"></iframe>
+</section>
+
+<script>
+// Calculator
+const fxRates = { USD:1, EUR:0.92, THB:34, GBP:0.78, JPY:145 };
+async function fetchLiveGoldPriceUSDPerOz() {
+  try {
+    const res = await fetch('https://freegoldapi.com/data/latest.json');
+    const jsonData = await res.json();
+    const latest = jsonData[jsonData.length - 1];
+    return parseFloat(latest.price);
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+document.getElementById('calculate-btn').addEventListener('click', async () => {
+  const weight = parseFloat(document.getElementById('gold-weight').value);
+  const currency = document.getElementById('currency').value;
+  if (!weight || weight <= 0) { alert("Please enter a valid weight."); return; }
+  const pricePerOz = await fetchLiveGoldPriceUSDPerOz();
+  if (!pricePerOz) {
+    document.getElementById('result').innerText = "Live price unavailable right now — try again later.";
+    return;
+  }
+  const pricePerGramUSD = pricePerOz / 31.1035;
+  const priceInCurrency = weight * pricePerGramUSD * (fxRates[currency] || 1);
+  document.getElementById('result').innerText = `${priceInCurrency.toFixed(2)} ${currency}`;
+});
+
+// Theme Toggle
+const themeBtn = document.getElementById('theme-btn');
+const body = document.body;
+if (localStorage.getItem('theme') === 'light') {
+  body.classList.add('light-mode');
+  themeBtn.textContent = '🌞';
+}
+themeBtn.addEventListener('click', () => {
+  body.classList.toggle('light-mode');
+  if (body.classList.contains('light-mode')) {
+    themeBtn.textContent = '🌞';
+    localStorage.setItem('theme', 'light');
+  } else {
+    themeBtn.textContent = '🌙';
+    localStorage.setItem('theme', 'dark');
+  }
+});
+</script>
+
+</body>
+</html>
